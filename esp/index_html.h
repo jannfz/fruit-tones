@@ -19,6 +19,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         font-size: 2.5rem;
     }
     h2 {
+        font-weight: normal;
         font-size: 1.5rem;
     }
     button {
@@ -33,9 +34,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     }
     button:hover {
         background: #f0f0f0;
-    }
-    label {
-
     }
     select {
         font-size: 1rem;
@@ -63,8 +61,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     }
     .screen {
         margin: 2rem;
-        /* border: 2px solid #ccc; */
-        /* border-radius: 10px;         */
     }
     .menu-item {
         display: flex;
@@ -96,17 +92,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         margin-top: 0.5rem;
         color: #444;
     }
-    .mode-title {
-        font-size: 2rem;
-        margin-top: 0.5rem;
-        color: #444;
-    }
-    .song-name {
-        font-size: 2rem;
-        margin-top: 0.5rem;
-        color: #444;
-    }
-    .song-resilt {
+    .song-result {
         font-size: 1rem;
         margin-top: 0.5rem;
         color: #444;
@@ -136,9 +122,13 @@ const char index_html[] PROGMEM = R"rawliteral(
 
         <div id="content-div" class="content">
 
-            <h1>Fruit Keyboard</h1>
+            <h1>Fruit Tones</h1>
 
             <div id="menu-screen" class="screen">
+
+                <h2>
+                    Menu
+                </h2>
 
                 <div class="menu-item">
                     <label class="menu-label" for="song-select">Song:</label><br>
@@ -162,7 +152,9 @@ const char index_html[] PROGMEM = R"rawliteral(
 
             <div id="listen-screen" class="screen">
 
-                <h2 id="listen-title">Listening to song: </h2>
+                <h2>
+                    Playing song: <strong id="listen-song"></strong>
+                </h2>
 
                 <div id="listen-sequence" class="song-sequence"></div>
 
@@ -175,7 +167,9 @@ const char index_html[] PROGMEM = R"rawliteral(
 
             <div id="play-screen" class="screen">
 
-                <h2 id="play-title">Playing song: </h2>
+                <h2>
+                    Playing song: <strong id="play-song"></strong>
+                </h2>
 
                 <div id="play-result" class="song-result"></div>
 
@@ -212,7 +206,7 @@ const char index_html[] PROGMEM = R"rawliteral(
                 fetch('/listen')
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById("listen-title").textContent = `Listening to song: ${data.name}`;
+                        document.getElementById("listen-song").textContent = data.name;
                         document.getElementById("listen-sequence").textContent = data.sequence;
                     })
                     .then(() => {
@@ -235,7 +229,7 @@ const char index_html[] PROGMEM = R"rawliteral(
                 fetch('/play')
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById("play-title").textContent = `Playing song: ${data.name}`;
+                        document.getElementById("play-song").textContent = data.name;
                     })
                     .then(() => {
                         document.getElementById('menu-screen').style.display = 'none';
