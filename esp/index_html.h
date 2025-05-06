@@ -1,0 +1,272 @@
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Fruit Keyboard🍓</title>
+        <style>
+    body {
+        font-family: sans-serif;
+        text-align: center;
+        background-color: #fefe70;
+        padding: 2rem;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><defs><pattern id="fruitPattern" patternUnits="userSpaceOnUse" width="120" height="240"><text x="0"   y="0"   font-size="14">🍎</text><text x="40"  y="0"   font-size="14">🍎</text><text x="80"  y="0"   font-size="14">🍎</text><text x="20"  y="40"  font-size="14">🎵</text><text x="60"  y="40"  font-size="14">🎵</text><text x="100" y="40"  font-size="14">🎵</text><text x="0"   y="80"  font-size="14">🍌</text><text x="40"  y="80"  font-size="14">🍌</text><text x="80"  y="80"  font-size="14">🍌</text><text x="20"  y="120" font-size="14">🎹</text><text x="60"  y="120" font-size="14">🎹</text><text x="100" y="120" font-size="14">🎹</text><text x="0"   y="160" font-size="14">🍊</text><text x="40"  y="160" font-size="14">🍊</text><text x="80"  y="160" font-size="14">🍊</text><text x="20"  y="200" font-size="14">🎶</text><text x="60"  y="200" font-size="14">🎶</text><text x="100" y="200" font-size="14">🎶</text><text x="0"   y="240" font-size="14">🍎</text><text x="40"  y="240" font-size="14">🍎</text><text x="80"  y="240" font-size="14">🍎</text></pattern></defs><rect width="100%" height="100%" fill="url(%23fruitPattern)"/></svg>');
+        background-repeat: repeat;
+        background-size: 100%;
+    }
+    h1 {
+        font-size: 2.5rem;
+    }
+    button {
+        font-size: 1rem;
+        padding: 0.5rem 1.2rem;
+        width: 100%;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        background: white;
+        transition: background 0.2s ease;
+    }
+    button:hover {
+        background: #f0f0f0;
+    }
+    label {
+
+    }
+    select {
+        font-size: 1rem;
+        padding: 0.5rem 1.2rem;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        background: white;
+        transition: background 0.2s ease;
+    }
+    #menu-screen {
+        display: block;
+    }
+    #game-screen {
+        display: none;
+    }
+    #listen-screen {
+        display: none;
+    }
+    .screen {
+        margin: 2rem;
+        /* border: 2px solid #ccc; */
+        /* border-radius: 10px;         */
+    }
+    .menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* optional: center in parent */
+        margin: 1rem;
+        gap: 0.5rem; /* optional: space between label and select */
+        width: auto;
+    }
+    .menu-label {
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        width: 30%;
+    }
+    .menu-select {
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        width: 70%;
+    }
+    .fruit-display {
+        font-size: 12rem;
+        margin-top: 2.5rem;
+        transition: transform 0.2s ease;
+    }
+    .fruit-name {
+        font-size: 2rem;
+        margin-top: 0.5rem;
+        color: #444;
+    }
+    .song-name {
+        font-size: 2rem;
+        margin-top: 0.5rem;
+        color: #444;
+    }
+    .song-sequence {
+        font-size: 3rem;
+        margin-top: 2.5rem;
+        transition: transform 0.2s ease;
+    }
+    .content {
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        background-color: #ffffffee;
+        background-opa
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        width: 100%;
+        max-width: 500px;
+    }
+        </style>
+    </head>
+    <body>
+
+        <div id="content-div" class="content">
+
+            <h1>Fruit Keyboard</h1>
+
+            <div id="menu-screen" class="screen">
+
+                <div class="menu-item">
+                    <label class="menu-label" for="song-select">Song:</label><br>
+                    <select id="song-select" class="menu-select">
+                        <option value="0">Song 1</option>
+                        <option value="1">Song 2</option>
+                        <option value="2">Song 3</option>
+                    </select>
+                </div>
+<!--            
+    $           <div class="menu-item">
+                    <label class="menu-label" for="mode-select">Mode:</label><br>
+                    <select id="mode-select" class="menu-select">
+                        <option value="0">Easy</option>
+                        <option value="1">Normal</option>
+                        <option value="2">Hard</option>
+                        <option value="3">Free Play</option>
+                    </select>
+                </div>
+-->
+
+                <div class="menu-item">
+                    <button onclick="listenToSong()">Listen to Song</button>
+                </div>
+
+                <div class="menu-item">
+                    <button onclick="playSong()">Play Song</button>
+                </div>
+
+            </div>
+
+            <div id="game-screen" class="screen">
+
+                <div id="fruit" class="fruit-display">🍋</div>
+
+                <div id="fruit-name" class="fruit-name">Citron</div>
+
+            </div>
+
+            <div id="listen-screen" class="screen">
+
+                <div id="song-sequence" class="song-sequence">Song 3</div>
+
+                <div id="song-name" class="song-name">🍋🍋🍋🍋🍋🍋🍋</div>
+
+                <div class="menu-item">
+                    <button onclick="returnToMenu()">Return to Menu</button>
+                </div>
+
+            </div>
+
+            <div id="play-screen" class="screen">
+
+                <div id="song-name" class="song-name"></div>
+
+            </div>
+
+        </div>
+
+        <script>
+
+            function listenToSong() {
+                const selectedSong = document.getElementById('song-select').value;
+
+                fetch('/setsong', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ song: parseInt(selectedSong) })
+                }).catch(err => console.error("Failed to set song:", err));
+
+
+                fetch('/listen', { method: 'POST' })
+                    .then(() => {
+                        document.getElementById('menu-screen').style.display = 'none';
+                        document.getElementById('listen-screen').style.display = 'block';
+                    })
+                    .catch(err => console.error("Failed to start game:", err));
+            }
+
+            function playSong() {
+                const selectedSong = document.getElementById('song-select').value;
+
+                fetch('/setsong', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ song: parseInt(selectedSong) })
+                }).catch(err => console.error("Failed to set song:", err));
+
+
+                fetch('/play_song', { method: 'POST' })
+                    .then(() => {
+                        document.getElementById('menu-screen').style.display = 'none';
+                        document.getElementById('play-screen').style.display = 'block';
+                    })
+                    .catch(err => console.error("Failed to start game:", err));
+            }
+
+            function returnToMenu() {
+
+                fetch('/return', { method: 'POST' })
+                    .then(() => {
+                        document.getElementById('play-screen').style.display = 'none';
+                        document.getElementById('listen-screen').style.display = 'none';
+                        document.getElementById('menu-screen').style.display = 'block';
+                    })
+                    .catch(err => console.error("Failed to start game:", err));
+            }
+
+            // function startGame() {
+            //     const selectedSong = document.getElementById('song-select').value;
+            //     const selectedMode = document.getElementById('mode-select').value;
+
+            //     fetch('/setsong', {
+            //         method: 'POST',
+            //         headers: {'Content-Type': 'application/json'},
+            //         body: JSON.stringify({ song: parseInt(selectedSong) })
+            //     }).catch(err => console.error("Failed to set song:", err));
+
+            //     fetch('/setmode', {
+            //         method: 'POST',
+            //         headers: {'Content-Type': 'application/json'},
+            //         body: JSON.stringify({ mode: parseInt(selectedMode) })
+            //     }).catch(err => console.error("Failed to set mode:", err));
+
+            //     fetch('/start', { method: 'POST' })
+            //         .then(() => {
+            //             document.getElementById('menu-screen').style.display = 'none';
+            //             document.getElementById('game-screen').style.display = 'block';
+            //         })
+            //         .catch(err => console.error("Failed to start game:", err));
+            // }
+
+            function updateFruitFromESP() {
+                fetch('/status')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("fruit").textContent = data.emoji;
+                        document.getElementById("fruit-name").textContent = data.name;
+                        document.getElementById("song-name").textContent = data.songName;
+                        document.getElementById("song-sequence").textContent = data.songSeq;
+                    })
+                    .catch(err => console.error("Failed to fetch /status:", err));
+            }
+
+            setInterval(updateFruitFromESP, 100); // poll every 100 ms instead of 10ms to be lighter
+        </script>
+
+    </body>
+</html>
+)rawliteral";
