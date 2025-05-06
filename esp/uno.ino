@@ -11,56 +11,77 @@ int8_t unoSetup(uint32_t baudrate) {
     return Error::Ok;
 }
 
+int8_t unoSendCommand(uint8_t cmd) {
+    UnoSerial.write(cmd);
+    UnoSerial.write(0x00);
+    return 1;
+}
+
+int8_t unoSendCommand(uint8_t cmd, uint8_t param) {
+    UnoSerial.write(cmd);
+    UnoSerial.write(param + 1);
+    return 1;
+}
+
+uint8_t unoFlush() {
+    uint8_t i = 0;
+    while (UnoSerial.available()) {
+        UnoSerial.read(); // Discard each byte
+        i++;
+    }
+    Serial.print("Flushed: ");
+    Serial.println(i);
+    return Error::Ok;
+}
+
 int8_t unoStartListen(uint8_t song) {
+    UnoSerial.write(CMD_LISTEN);
+    UnoSerial.write(song + 1);
+    return 1;
+}
+
+int8_t unoStartFreeplay() {
+    UnoSerial.write(CMD_FREEPLAY);
+    return 1;
+}
+
+
+int8_t unoStartPlay(uint8_t song) {
 
     if (song >= NUM_SONGS) {
         Serial.println("unoStartGame - song -> Invalid Parameter");
         return 0;
     }
 
-    UnoSerial.write(CMD_LISTEN);
+    UnoSerial.write(CMD_PLAY);
     UnoSerial.write(song + 1);
 
     return 1;
 }
-int8_t unoAvailable() {
-    if (UnoSerial.available()) {
-        return 1;
-    }
-    return 0;
-}
 
-int8_t unoCheckDone() {
 
+int8_t unoGetData(Command_t *msg) {
     if (UnoSerial.available()) {
-        uint8_t cmd = UnoSerial.read();
+
+        Serial.print("available: ");
+        Serial.println(UnoSerial.available());
+
+        uint8_t cmd = UnoSerial.peek();
+        uint8_t len = UnoSerial.available();
+
         if (cmd == CMD_DONE) {
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-
-
-int8_t unoGetData() {
-
-    if (UnoSerial.available()) {
-
-        uint8_t buffer[2];
-        size_t len = UnoSerial.readBytes(buffer, 2);
-
-        if (buffer[0] == CMD_DONE) {
-            return CMD_DONE;
-        }
-
-        if (len == 2 && buffer[0] == CMD_NOTE) {
-            if (buffer[1] >= NUM_NOTES) {
-                return Error::InvParam;
-            }
-            return buffer[1];
-        }
+            Serial.println("done.");
+            msg->cmd = UnoSerial.read();
+            return Error::Ok;
+        } else if (cmd == CMD_NOTE && len > 1) {
+            msg->cmd = UnoSerial.read();
+            msg->param = UnoSerial.read();
+            return Error::Ok;
+        } else if (cmd == CMD_RESULT && len > 1) {
+            msg->cmd = UnoSerial.read();
+            msg->param = UnoSerial.read();
+            return Error::Ok;
+        };
     }
 
     return Error::Err;

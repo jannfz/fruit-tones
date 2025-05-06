@@ -18,6 +18,9 @@ const char index_html[] PROGMEM = R"rawliteral(
     h1 {
         font-size: 2.5rem;
     }
+    h2 {
+        font-size: 1.5rem;
+    }
     button {
         font-size: 1rem;
         padding: 0.5rem 1.2rem;
@@ -50,6 +53,12 @@ const char index_html[] PROGMEM = R"rawliteral(
         display: none;
     }
     #listen-screen {
+        display: none;
+    }
+    #play-screen {
+        display: none;
+    }
+    #freeplay-screen {
         display: none;
     }
     .screen {
@@ -87,8 +96,18 @@ const char index_html[] PROGMEM = R"rawliteral(
         margin-top: 0.5rem;
         color: #444;
     }
+    .mode-title {
+        font-size: 2rem;
+        margin-top: 0.5rem;
+        color: #444;
+    }
     .song-name {
         font-size: 2rem;
+        margin-top: 0.5rem;
+        color: #444;
+    }
+    .song-resilt {
+        font-size: 1rem;
         margin-top: 0.5rem;
         color: #444;
     }
@@ -124,22 +143,8 @@ const char index_html[] PROGMEM = R"rawliteral(
                 <div class="menu-item">
                     <label class="menu-label" for="song-select">Song:</label><br>
                     <select id="song-select" class="menu-select">
-                        <option value="0">Song 1</option>
-                        <option value="1">Song 2</option>
-                        <option value="2">Song 3</option>
                     </select>
                 </div>
-<!--            
-    $           <div class="menu-item">
-                    <label class="menu-label" for="mode-select">Mode:</label><br>
-                    <select id="mode-select" class="menu-select">
-                        <option value="0">Easy</option>
-                        <option value="1">Normal</option>
-                        <option value="2">Hard</option>
-                        <option value="3">Free Play</option>
-                    </select>
-                </div>
--->
 
                 <div class="menu-item">
                     <button onclick="listenToSong()">Listen to Song</button>
@@ -149,21 +154,18 @@ const char index_html[] PROGMEM = R"rawliteral(
                     <button onclick="playSong()">Play Song</button>
                 </div>
 
-            </div>
-
-            <div id="game-screen" class="screen">
-
-                <div id="fruit" class="fruit-display">🍋</div>
-
-                <div id="fruit-name" class="fruit-name">Citron</div>
+                <div class="menu-item">
+                    <button onclick="freeplay()">Freeplay</button>
+                </div>
 
             </div>
 
             <div id="listen-screen" class="screen">
 
-                <div id="song-sequence" class="song-sequence">Song 3</div>
+                <h2 id="listen-title">Listening to song: </h2>
 
-                <div id="song-name" class="song-name">🍋🍋🍋🍋🍋🍋🍋</div>
+                <div id="listen-sequence" class="song-sequence"></div>
+
 
                 <div class="menu-item">
                     <button onclick="returnToMenu()">Return to Menu</button>
@@ -173,7 +175,23 @@ const char index_html[] PROGMEM = R"rawliteral(
 
             <div id="play-screen" class="screen">
 
-                <div id="song-name" class="song-name"></div>
+                <h2 id="play-title">Playing song: </h2>
+
+                <div id="play-result" class="song-result"></div>
+
+                <div class="menu-item">
+                    <button onclick="returnToMenu()">Return to Menu</button>
+                </div>
+
+            </div>
+
+            <div id="freeplay-screen" class="screen">
+
+                <h2>Freeplay</h2>
+
+                <div class="menu-item">
+                    <button onclick="returnToMenu()">Return to Menu</button>
+                </div>
 
             </div>
 
@@ -191,7 +209,12 @@ const char index_html[] PROGMEM = R"rawliteral(
                 }).catch(err => console.error("Failed to set song:", err));
 
 
-                fetch('/listen', { method: 'POST' })
+                fetch('/listen')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("listen-title").textContent = `Listening to song: ${data.name}`;
+                        document.getElementById("listen-sequence").textContent = data.sequence;
+                    })
                     .then(() => {
                         document.getElementById('menu-screen').style.display = 'none';
                         document.getElementById('listen-screen').style.display = 'block';
@@ -209,10 +232,24 @@ const char index_html[] PROGMEM = R"rawliteral(
                 }).catch(err => console.error("Failed to set song:", err));
 
 
-                fetch('/play_song', { method: 'POST' })
+                fetch('/play')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("play-title").textContent = `Playing song: ${data.name}`;
+                    })
                     .then(() => {
                         document.getElementById('menu-screen').style.display = 'none';
                         document.getElementById('play-screen').style.display = 'block';
+                    })
+                    .catch(err => console.error("Failed to start game:", err));
+            }
+
+            function freeplay() {
+
+                fetch('/freeplay', { method: 'POST' })
+                    .then(() => {
+                        document.getElementById('menu-screen').style.display = 'none';
+                        document.getElementById('freeplay-screen').style.display = 'block';
                     })
                     .catch(err => console.error("Failed to start game:", err));
             }
@@ -222,49 +259,42 @@ const char index_html[] PROGMEM = R"rawliteral(
                 fetch('/return', { method: 'POST' })
                     .then(() => {
                         document.getElementById('play-screen').style.display = 'none';
+                        document.getElementById('freeplay-screen').style.display = 'none';
                         document.getElementById('listen-screen').style.display = 'none';
                         document.getElementById('menu-screen').style.display = 'block';
                     })
                     .catch(err => console.error("Failed to start game:", err));
             }
 
-            // function startGame() {
-            //     const selectedSong = document.getElementById('song-select').value;
-            //     const selectedMode = document.getElementById('mode-select').value;
+            function populateSongSelect() {
+                fetch('/song-list')
+                    .then(res => res.json())
+                    .then(songs => {
+                        const select = document.getElementById('song-select');
+                        select.innerHTML = ""; // Clear existing options
+                        songs.forEach((song, index) => {
+                            const option = document.createElement("option");
+                            option.value = index;
+                            option.textContent = song;
+                            select.appendChild(option);
+                        });
+                    })
+                    .catch(err => console.error("Failed to load songs:", err));
+            }
 
-            //     fetch('/setsong', {
-            //         method: 'POST',
-            //         headers: {'Content-Type': 'application/json'},
-            //         body: JSON.stringify({ song: parseInt(selectedSong) })
-            //     }).catch(err => console.error("Failed to set song:", err));
+            // Call this when the page loads
+            window.onload = populateSongSelect;
 
-            //     fetch('/setmode', {
-            //         method: 'POST',
-            //         headers: {'Content-Type': 'application/json'},
-            //         body: JSON.stringify({ mode: parseInt(selectedMode) })
-            //     }).catch(err => console.error("Failed to set mode:", err));
-
-            //     fetch('/start', { method: 'POST' })
-            //         .then(() => {
-            //             document.getElementById('menu-screen').style.display = 'none';
-            //             document.getElementById('game-screen').style.display = 'block';
-            //         })
-            //         .catch(err => console.error("Failed to start game:", err));
-            // }
-
-            function updateFruitFromESP() {
+            function updateStatus() {
                 fetch('/status')
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById("fruit").textContent = data.emoji;
-                        document.getElementById("fruit-name").textContent = data.name;
-                        document.getElementById("song-name").textContent = data.songName;
-                        document.getElementById("song-sequence").textContent = data.songSeq;
+                        document.getElementById("play-result").textContent = data.result;
                     })
                     .catch(err => console.error("Failed to fetch /status:", err));
             }
 
-            setInterval(updateFruitFromESP, 100); // poll every 100 ms instead of 10ms to be lighter
+            setInterval(updateStatus, 100); // poll every 100 ms instead of 10ms to be lighter
         </script>
 
     </body>

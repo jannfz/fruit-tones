@@ -15,12 +15,14 @@ enum GameState {
     MenuS = 0,
     ListenS,
     PlayS,
+    FreeplayS,
 };
 
 enum MenuSelect {
     NoneM = 0,
     ListenM,
     PlayM,
+    FreeplayM,
     ReturnM,
 };
 
@@ -45,15 +47,6 @@ typedef enum Note {
 
 const uint8_t NUM_MODES = 2;
 
-enum Mode {
-    EasyM,
-    NormalM,
-    HardM,
-    FreeplayM,
-    ShowSongM,
-    PlaySongM,
-};
-
 typedef struct {
   const char note;
   const uint16_t freq;
@@ -63,10 +56,20 @@ typedef struct {
   const uint16_t *bitmap;
 } Note_t;
 
+typedef enum {
+    CMD_LISTEN    = 0x41,
+    CMD_PLAY      = 0x42,
+    CMD_FREEPLAY  = 0x43,
+    CMD_RETURN    = 0x44,
+    CMD_DONE      = 0x81,
+    CMD_NOTE      = 0x82,
+    CMD_RESULT    = 0x83,
+} Command;
+
 
 typedef struct {
-  uint8_t cmd;
-  uint8_t param;
+    uint8_t cmd;
+    uint8_t param;
 } Command_t;
 
 typedef struct {
@@ -79,7 +82,7 @@ typedef struct {
 const uint8_t NUM_NOTES = 7;
 
 const Note_t Notes[NUM_NOTES+1] = {
-  {'C', 261,  4, "Lemon",    "🍋", lime},      // 0
+  {'C', 261,  4, "Lemon",    "🍋", lemon},      // 0
   {'D', 293,  5, "Apple",    "🍎", apple},     // 1
   {'E', 329,  6, "Banana",   "🍌", banana},    // 2
   {'F', 349,  7, "Pear",     "🍐", pear},      // 3
@@ -92,35 +95,28 @@ const Note_t Notes[NUM_NOTES+1] = {
 const uint8_t NUM_SONGS = 2;
 
 const Song_t Songs[NUM_SONGS] = {
-    {"Song 1", 14, {C, C, G, G, A, A, G, F, F, E, E, D, D, C, NoNote}},
-    {"Song 2", 14, {E, E, E, C, E, G, G, C, G, E, A, B, A, G, NoNote}},
+    {"Itsy Bitsy Spider", 14, {C, C, G, G, A, A, G, F, F, E, E, D, D, C, NoNote}},
+    {"Twinkle, Twinkle, Little Star", 14, {E, E, E, C, E, G, G, C, G, E, A, B, A, G, NoNote}},
 };
 
-#define CMD_LISTEN      0x41
-#define CMD_PLAY        0x42
-#define CMD_FREEPLAY    0x43
-#define CMD_RETURN      0x43
-
-#define CMD_DONE        0x81
-#define CMD_NOTE        0x82
 
 
 
 
-#define CMD_NEW_GAME    0x41
-#define CMD_RESET       0x42         // RESET
-#define CMD_MODE        0x44         // SETMODE:    0x00 - 0x01 (game, freeplay)
-#define CMD_SONG        0x84         // SONG:            0x00 - 0x08
-#define CMD_NOTE_OLD    0x81         // FRUIT:           0x00 - 0x07 (fruit 0 to 7)
-#define CMD_PLAYED      0x82         // CORRECT:         0x00 - 0x07 (fruit 0 to 7)
-#define CMD_SCORE       0x83         // SCORE:           0x0000 - 0x7FFF
-#define CMD_GAMEOVER    0x85         // GAMEOVER
-                                     //
-
-
-#define CMD_NEW_POS   0
-#define CMD_SONG_POS    1
-#define CMD_MODE_POS    2
+// #define CMD_NEW_GAME    0x41
+// #define CMD_RESET       0x42         // RESET
+// #define CMD_MODE        0x44         // SETMODE:    0x00 - 0x01 (game, freeplay)
+// #define CMD_SONG        0x84         // SONG:            0x00 - 0x08
+// #define CMD_NOTE_OLD    0x81         // FRUIT:           0x00 - 0x07 (fruit 0 to 7)
+// #define CMD_PLAYED      0x82         // CORRECT:         0x00 - 0x07 (fruit 0 to 7)
+// #define CMD_SCORE       0x83         // SCORE:           0x0000 - 0x7FFF
+// #define CMD_GAMEOVER    0x85         // GAMEOVER
+//                                      //
+// 
+// 
+// #define CMD_NEW_POS   0
+// #define CMD_SONG_POS    1
+// #define CMD_MODE_POS    2
 
 
 

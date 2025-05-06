@@ -2,23 +2,12 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <SoftwareSerial.h>
-#include "FruitKeyboard.h"
+#include "fruit-keyboard.h"
 #include "gpio.h"
 
 
 
-const int sequence_length_1 = sizeof(level1_sequence) / sizeof(level1_sequence[0]); // length of sequence for Level 1
-const int sequence_length_2 = sizeof(level2_sequence) / sizeof(level2_sequence[0]); // length of sequence for Level 2
-
-enum state {
-    RecieveData,
-    ShowSong,
-    Play_song,
-    Started,
-    Stopped
-};
-
-state currentState = recieve_data;
+GameState currentState = GameState::MenuS;
 
 int currentLevel = 1; // Starting with Level 1
 
@@ -38,6 +27,29 @@ void setup() {
 }
 
 void loop() {
-    gameTick();
+
+
+
+    _delay_ms(2000);
+
+    espSetNote(0);
+    _delay_ms(1000);
+    espSetNote(0);
+    _delay_ms(1000);
+    espSetNote(0);
+    _delay_ms(1000);
+    espSetNote(0);
+    _delay_ms(1000);
+    espSetNote(0);
+    _delay_ms(1000);
+    espSetNote(0);
+    _delay_ms(1000);
+    espSetNote(0);
+    _delay_ms(1000);
+    espDone(0);
+    
+
+
+    // gameTick();
 }
 

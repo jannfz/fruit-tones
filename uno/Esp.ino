@@ -1,5 +1,5 @@
 #include "gpio.h"
-#include "FruitKeyboard.h"
+#include "fruit-keyboard.h"
 #include <SoftwareSerial.h>
 
 // Static instance inside the file scope
@@ -16,32 +16,39 @@ int8_t espSetNote(uint8_t note) {
     return Error::Ok;
 }
 
-int8_t espGetNewGame(uint8_t &song, uint8_t &mode) {
 
-    if (EspSerial.available() < 3) {
-        return Error::NotReady;
-    }
-
-    uint8_t buffer[3];
-    size_t len = EspSerial.readBytes(buffer, 3);
-
-    if (len == 3 && buffer[CMD_NEW_POS] == CMD_NEW) {
-
-        if (buffer[CMD_SONG_POS] >= NUM_SONGS) {
-            song = buffer[CMD_SONG_POS];
-            Serial.println("unoStartGame - song -> Invalid Parameter");
-            return Error::InvParam;
-        }
-
-        if (buffer[CMD_MODE_POS] >= NUM_MODES) {
-            mode = buffer[CMD_MODE_POS];
-            Serial.println("unoStartGame - mode -> Invalid Parameter");
-            return Error::InvParam;
-        }
-
-        return ;
-    }
-
-    return Error::Err;
+int8_t espDone(uint8_t note) {
+    EspSerial.write(CMD_DONE);
+    return Error::Ok;
 }
+
+
+// int8_t espGetNewGame(uint8_t &song, uint8_t &mode) {
+// 
+//     if (EspSerial.available() < 3) {
+//         return Error::NotReady;
+//     }
+// 
+//     uint8_t buffer[3];
+//     size_t len = EspSerial.readBytes(buffer, 3);
+// 
+//     if (len == 3 && buffer[CMD_NEW_POS] == CMD_NEW_SONG) {
+// 
+//         if (buffer[CMD_SONG_POS] >= NUM_SONGS) {
+//             song = buffer[CMD_SONG_POS];
+//             Serial.println("unoStartGame - song -> Invalid Parameter");
+//             return Error::InvParam;
+//         }
+// 
+//         if (buffer[CMD_MODE_POS] >= NUM_MODES) {
+//             mode = buffer[CMD_MODE_POS];
+//             Serial.println("unoStartGame - mode -> Invalid Parameter");
+//             return Error::InvParam;
+//         }
+// 
+//         return ;
+//     }
+// 
+//     return Error::Err;
+// }
 

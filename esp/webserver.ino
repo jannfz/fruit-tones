@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ArduinoJson.h>
 #include "secrets.h"
 #include "fruit_keyboard.h"
 #include "index_html.h"
@@ -8,44 +9,60 @@
 // Web server instance
 ESP8266WebServer server(80);
 
+String play_result = "";
 
 void connectToWiFi() {
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  Serial.print("Connecting to WiFi");
+    Serial.print("Connecting to WiFi");
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
 
-  Serial.println("Connected to WiFi!");
+    Serial.println("Connected to WiFi!");
 
-  Serial.println(WiFi.localIP());
+    Serial.println(WiFi.localIP());
 
-  if (MDNS.begin("iot")) {
-    Serial.println("mDNS responder started");
-  }
+    if (MDNS.begin("iot")) {
+        Serial.println("mDNS responder started");
+    }
 }
 
 void setupWebServer() {
-  server.on("/", HTTP_GET, handleRoot);
-  server.on("/status", HTTP_GET, handleStatus);
-  server.on("/setsong", HTTP_POST, handleSetSong);
-  // server.on("/setmode", HTTP_POST, handleSetMode);
-  server.on("/listen", HTTP_POST, handleListen);
-  server.on("/play", HTTP_POST, handlePlay);
-  server.on("/return", HTTP_POST, handleReturn);
-  // server.on("/start", HTTP_POST, handleStart);
-  server.onNotFound(handleNotFound);
+    server.on("/", HTTP_GET, handleRoot);
+    server.on("/song-list", HTTP_GET, handleSongList);
+    server.on("/setsong", HTTP_POST, handleSetSong);
+    server.on("/listen", HTTP_GET, handleListen);
+    server.on("/play", HTTP_GET, handlePlay);
+    server.on("/status", HTTP_GET, handleStatus);
+    server.on("/freeplay", HTTP_POST, handleFreeplay);
+    server.on("/return", HTTP_POST, handleReturn);
+    server.onNotFound(handleNotFound);
 
-  server.begin();
-  Serial.println("Server started");
+    server.begin();
+    Serial.println("Server started");
 }
 
 void handleRoot() {
-  server.send(200, "text/html", index_html);
+    server.send(200, "text/html", index_html);
+}
+
+void handleSongList() {
+    DynamicJsonDocument doc(512);
+    JsonArray arr = doc.to<JsonArray>();
+
+    for (const Song_t &song : Songs) {
+        arr.add(song.name);
+    }
+
+    String json;
+    serializeJson(doc, json);
+    Serial.println("===> /song-list called");
+    Serial.println(json);
+    server.send(200, "application/json", json);
 }
 
 String getSongEmojiString(const Song_t& song) {
@@ -61,80 +78,71 @@ String getSongEmojiString(const Song_t& song) {
     return emojiString;
 }
 
-void handleStatus() {
-  String emoji     = Notes[current_note].emoji;
-  String name      = Notes[current_note].name;
-  String songName  = Songs[current_song].name;
-  String songSeq   = getSongEmojiString(Songs[current_song]);
-
-  // Escape any double quotes (unlikely in emoji, but safe for names)
-  name.replace("\"", "\\\"");
-  songName.replace("\"", "\\\"");
-  songSeq.replace("\"", "\\\"");
-
-  String json = "{";
-  json += "\"emoji\": \""       + emoji + "\", ";
-  json += "\"name\": \""        + name + "\", ";
-  json += "\"songName\": \""    + songName + "\", ";
-  json += "\"songSeq\": \""     + songSeq + "\"";
-  json += "}";
-
-  server.send(200, "application/json", json);
-}
-
-void handleNotFound() {
-  server.send(404, "text/plain", "404: Not found");
-}
-
 void handleSetSong() {
-  if (server.hasArg("plain")) {
-    String body = server.arg("plain");
-    Serial.println("Received setsong body: " + body);
+    if (server.hasArg("plain")) {
+        String body = server.arg("plain");
+        Serial.println("Received setsong body: " + body);
 
-    // super basic way without ArduinoJson:
-    int colonIndex = body.indexOf(":");
-    int value = body.substring(colonIndex + 1).toInt();
-    current_song = value;
+        // super basic way without ArduinoJson:
+        int colonIndex = body.indexOf(":");
+        int value = body.substring(colonIndex + 1).toInt();
+        current_song = value;
 
-    Serial.print("Selected song: ");
-    Serial.println(Songs[current_song].name);
-  }
-  server.send(200, "text/plain", "OK");
+        Serial.print("Selected song: ");
+        Serial.println(Songs[current_song].name);
+    }
+    server.send(200, "text/plain", "OK");
 }
 
-// void handleSetMode() {
-//   if (server.hasArg("plain")) {
-//     String body = server.arg("plain");
-//     Serial.println("Received setmode body: " + body);
-// 
-//     int colonIndex = body.indexOf(":");
-//     int value = body.substring(colonIndex + 1).toInt();
-//     current_mode = value;
-// 
-//     Serial.print("Selected mode: ");
-//     Serial.println(current_mode);
-//   }
-//   server.send(200, "text/plain", "OK");
-// }
-
-// void handleStart() {
-//   Serial.println("Starting game...");
-//   state = GameState::GameOnS;
-//   server.send(200, "text/plain", "Game started");
-// }
+void sendResult(String res) {
+    play_result = res;
+}
 
 void handleListen() {
-  menu_selection = MenuSelect::ListenM;
-  server.send(200, "text/plain", "Listening to song");
+
+    DynamicJsonDocument doc(512);
+    doc["name"] = Songs[current_song].name;
+    doc["sequence"] = getSongEmojiString(Songs[current_song]);
+
+    String json;
+    serializeJson(doc, json);
+    server.send(200, "application/json", json);
+
+    menu_selection = MenuSelect::ListenM;
 }
 
 void handlePlay() {
-  menu_selection = MenuSelect::PlayM;
-  server.send(200, "text/plain", "Playing song");
+
+    DynamicJsonDocument doc(512);
+    doc["name"] = Songs[current_song].name;
+
+    String json;
+    serializeJson(doc, json);
+    server.send(200, "application/json", json);
+
+    menu_selection = MenuSelect::PlayM;
+}
+
+void handleFreeplay() {
+    menu_selection = MenuSelect::FreeplayM;
+    server.send(200, "text/plain", "Playing song");
 }
 
 void handleReturn() {
-  menu_selection = MenuSelect::ReturnM;
-  server.send(200, "text/plain", "Return to menu");
+    menu_selection = MenuSelect::ReturnM;
+    server.send(200, "text/plain", "Return to menu");
 }
 
+void handleStatus() {
+
+    DynamicJsonDocument doc(512);
+    doc["result"] = play_result;
+
+    String json;
+    serializeJson(doc, json);
+    server.send(200, "application/json", json);
+}
+
+void handleNotFound() {
+    server.send(404, "text/plain", "404: Not found");
+}
