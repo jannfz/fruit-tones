@@ -1,7 +1,0 @@
-arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 nodemcu/
-arduino-cli upload -p /dev/ttyUSB1 --fqbn esp8266:esp8266:nodemcuv2 nodemcu/
-arduino-cli.yaml
-
-# arduino-cli compile --fqbn arduino:avr:uno uno/
-# arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:uno uno/
-#
