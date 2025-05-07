@@ -23,6 +23,7 @@ void setup() {
 
     Serial.println("\n======== Fruit Tones ========\n");
 
+    connect_to_WiFi();
     setupWebServer();
 
 }
