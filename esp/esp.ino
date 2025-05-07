@@ -98,6 +98,10 @@ void loop() {
                         Serial.println("❌ incorrect!");
                     }
                     break;
+                } else if (received_command.cmd == CMD_DONE) {
+                    Serial.println("DONE!");
+                    Serial.println("State: Menu");
+                    current_state = GameState::MenuS;
                 } else if (received_command.cmd == CMD_NOTE) {
                     current_note = received_command.param;
                     Serial.print("Note: ");
@@ -108,7 +112,7 @@ void loop() {
             }
             if (menu_selection == MenuSelect::ReturnM) {
                 Serial.println("Returning to menu...");
-                sendResult("");
+                sendResult(" ");
                 menu_selection = MenuSelect::NoneM;
                 break;
             }
