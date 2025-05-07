@@ -16,10 +16,12 @@
     }
     h1 {
         font-size: 2.5rem;
+        cursor: default;
     }
     h2 {
         font-weight: normal;
         font-size: 1.5rem;
+        cursor: default;
     }
     button {
         font-size: 1rem;
@@ -43,8 +45,15 @@
         background: white;
         transition: background 0.2s ease;
     }
-    #menu-screen {
+    #main-menu-screen{
         display: block;
+    }
+
+    #tutorial-screen{
+        display: none;
+    }
+    #menu-screen {
+        display: none;
     }
     #game-screen {
         display: none;
@@ -61,6 +70,25 @@
     .screen {
         margin: 2rem;
     }
+    .tutorial {
+        margin: 2rem auto;
+        max-width: 450px;
+        text-align: start;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #333;
+    }
+      
+        .tutorial h2 {
+          text-align: center;
+          font-size: 1.75rem;
+          margin-bottom: -1rem;
+          color: #222;
+        }
+        
+        .tutorial p {
+          margin-bottom: 1.2rem;
+        }
     .menu-item {
         display: flex;
         align-items: center;
@@ -80,6 +108,44 @@
         cursor: pointer;
         transition: background 0.2s ease;
         width: 70%;
+    }
+    .menu-question{
+      border: none;
+      font-weight: bold;
+      width: 20px;
+      height: 32px;
+      background-color: #eee;
+      transition: all ease-in-out 0.1s;
+      cursor: help;
+    }
+    .menu-question:hover{
+      border: 1px solid #888;
+      background-color: #ddd;
+    }
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .custom-tooltip {
+      display: none;
+      position: absolute;
+      top: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      white-space: normal;
+      width: 250px;
+      z-index: 10;
+      text-align: left;
+    }
+    
+    .tooltip-wrapper:hover .custom-tooltip {
+      display: block;
     }
     .fruit-display {
         font-size: 12rem;
@@ -123,6 +189,30 @@
 
             <h1>Fruit Tones</h1>
 
+            <div id="main-menu-screen" class="screen">
+
+                <div class="menu-item">
+                    <button onclick="startGame()">Start playing Fruit Tones</button>
+                </div>
+
+                <div class="menu-item">
+                    <button onclick="goToTutorial()">How to play Fruit Tones</button>
+                </div>
+
+            </div>
+
+            <div id="tutorial-screen" class="tutorial">
+                <h2>Tutorial</h2>
+                <p>When playing Fruit Tones, there are two main ways to play.</p>
+                <p>You can play in Freeplay mode, where you can just play the fruit tones however you like without any underlying structure.
+                This is great for when you just want to play around, practice the many songs you've learned, or just free style melodies off the top of your head.<br>
+                Just press the fruits on the table, and you'll be transported to a world of music!</p>
+                <p>The other main way to play is where you'll be learning to play one of the songs in the Fruit Tones song library.<br>
+                At the top of the game menu, you can choose between multiple songs in a drop-down-menu. Here you'll choose the song, you'd most like to hear or to play.<br>
+                After you've chosen your preferred song, you can either press the "Listen to Song"-button or "Play Song"-button. If you press "Listen to Song", the chosen song will be played. 
+                While the song is playing, a sequence of fruits will also be displayed here on screen. This is actually the exact sequence, you'll have to play on the fruits on the table to 
+                play your chosen song. <br>
+                When listening to the song, you can not play the fruits.</p>
             <div id="menu-screen" class="screen">
 
                 <h2>

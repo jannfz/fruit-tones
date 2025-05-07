@@ -21,7 +21,6 @@ void setup() {
 
     delay(10);
 
-    connectToWiFi();
     setupWebServer();
 }
 

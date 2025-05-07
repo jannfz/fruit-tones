@@ -1,8 +1,6 @@
-#include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
-#include "secrets.h"
 #include "fruit_keyboard.h"
 #include "index_html.h"
 
@@ -10,26 +8,6 @@
 ESP8266WebServer server(80);
 
 String play_result = "";
-
-void connectToWiFi() {
-
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-    Serial.print("Connecting to WiFi");
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-
-    Serial.println("Connected to WiFi!");
-
-    Serial.println(WiFi.localIP());
-
-    if (MDNS.begin("iot")) {
-        Serial.println("mDNS responder started");
-    }
-}
 
 void setupWebServer() {
     server.on("/", HTTP_GET, handleRoot);
