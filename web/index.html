@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Fruit Keyboard🍓</title>
+        <title>🎶 Fruit Tones</title>
         <style>
     body {
         font-family: sans-serif;
@@ -69,6 +69,7 @@
     }
     .screen {
         margin: 2rem;
+        min-height: 500px;
     }
     .tutorial {
         margin: 2rem auto;
@@ -158,8 +159,10 @@
         color: #444;
     }
     .song-result {
-        font-size: 1rem;
-        margin-top: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 4rem;
+        margin-bottom: 4rem;
         color: #444;
     }
     .song-sequence {
@@ -187,7 +190,7 @@
 
         <div id="content-div" class="content">
 
-            <h1>Fruit Tones</h1>
+            <h1>🎶 Fruit Tones</h1>
 
             <div id="main-menu-screen" class="screen">
 
@@ -213,28 +216,67 @@
                 While the song is playing, a sequence of fruits will also be displayed here on screen. This is actually the exact sequence, you'll have to play on the fruits on the table to 
                 play your chosen song. <br>
                 When listening to the song, you can not play the fruits.</p>
+                <p>If you press "Play Song" in the game menu, you will be able to attempt to play the song, you've chosen. You have to play exactly the same number of notes as there is in the 
+                correct melody. So if there are 10 notes in your chosen song, the game will wait for you to play 10 notes. Once the 10th note has been played, the correct version of the melody
+                is played again, followed by the melody you've played. Be sure to listen to where your attempt differs from the correct way to play the melody, so you keep improving your playing.<br>
+                If you want to play the song again, you'll have to chose it again and press "Play Song".</p>
+                
+                <div class="menu-item">
+                    <button onclick="returnToMainMenu()">Return to Main Menu</button>
+                </div>
+                
+            </div>
+
             <div id="menu-screen" class="screen">
 
                 <h2>
-                    Menu
+                    Game Menu
                 </h2>
 
                 <div class="menu-item">
                     <label class="menu-label" for="song-select">Song:</label><br>
                     <select id="song-select" class="menu-select">
                     </select>
+                    <div class="tooltip-wrapper">
+                      <button class="menu-question">?</button>
+                      <div class="custom-tooltip">
+                        Choose between the different songs in our extensive song library, either to listen to or play yourself
+                      </div>
+                    </div><br>
                 </div>
 
                 <div class="menu-item">
                     <button onclick="listenToSong()">Listen to Song</button>
+                    <div class="tooltip-wrapper">
+                      <button class="menu-question">?</button>
+                      <div class="custom-tooltip">
+                        Click here to listen to how the song is played. The full 'fruit sequence' will also be displayed to help following along with the notes being played
+                      </div>
+                    </div>
                 </div>
 
                 <div class="menu-item">
                     <button onclick="playSong()">Play Song</button>
+                    <div class="tooltip-wrapper">
+                      <button class="menu-question">?</button>
+                      <div class="custom-tooltip">
+                        Try your hand at playing the chosen song yourself! Practice makes perfect!
+                      </div>
+                    </div>
                 </div>
 
                 <div class="menu-item">
                     <button onclick="freeplay()">Freeplay</button>
+                    <div class="tooltip-wrapper">
+                      <button class="menu-question">?</button>
+                      <div class="custom-tooltip">
+                        Have fun, playing whatever you feel like. Practice what you've learned, or just play around with the music!
+                      </div>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <button onclick="returnToMainMenu()">Return to Main Menu</button>
                 </div>
 
             </div>
@@ -242,7 +284,7 @@
             <div id="listen-screen" class="screen">
 
                 <h2>
-                    Listening to song: <strong id="listen-song"></strong>
+                    Playing song: <strong id="listen-song"></strong>
                 </h2>
 
                 <div id="listen-sequence" class="song-sequence"></div>
@@ -335,6 +377,24 @@
                         document.getElementById('freeplay-screen').style.display = 'block';
                     })
                     .catch(err => console.error("Failed to start game:", err));
+            }
+
+            function startGame() {
+                document.getElementById('main-menu-screen').style.display = 'none';
+                document.getElementById('menu-screen').style.display = 'block';
+            }
+
+            function returnToMainMenu() {
+                document.getElementById('main-menu-screen').style.display = 'block';
+                document.getElementById('play-screen').style.display = 'none';
+                document.getElementById('listen-screen').style.display = 'none';
+                document.getElementById('menu-screen').style.display = 'none';
+                document.getElementById('tutorial-screen').style.display = 'none';
+            }
+
+            function goToTutorial() {
+                document.getElementById('main-menu-screen').style.display = 'none';
+                document.getElementById('tutorial-screen').style.display = 'block';
             }
 
             function returnToMenu() {
