@@ -21,7 +21,10 @@ void setup() {
 
     delay(10);
 
+    Serial.println("\n======== Fruit Tones ========\n");
+
     setupWebServer();
+
 }
 
 void loop() {
@@ -66,7 +69,7 @@ void loop() {
 
                 if (received_command.cmd == CMD_DONE) {
                     Serial.println("State: Menu");
-                    Serial.println("Song is done...");
+                    Serial.println("DONE!");
                     current_state = GameState::MenuS;
                     break;
                 } else if (received_command.cmd == CMD_NOTE) {
@@ -94,8 +97,6 @@ void loop() {
                         sendResult("❌ incorrect!");
                         Serial.println("❌ incorrect!");
                     }
-                    Serial.println("State: Menu");
-                    Serial.println("Song is done...");
                     break;
                 } else if (received_command.cmd == CMD_NOTE) {
                     current_note = received_command.param;

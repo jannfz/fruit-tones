@@ -29,8 +29,6 @@ uint8_t unoFlush() {
         UnoSerial.read(); // Discard each byte
         i++;
     }
-    Serial.print("Flushed: ");
-    Serial.println(i);
     return Error::Ok;
 }
 
@@ -63,14 +61,10 @@ int8_t unoStartPlay(uint8_t song) {
 int8_t unoGetData(Command_t *msg) {
     if (UnoSerial.available()) {
 
-        Serial.print("available: ");
-        Serial.println(UnoSerial.available());
-
         uint8_t cmd = UnoSerial.peek();
         uint8_t len = UnoSerial.available();
 
         if (cmd == CMD_DONE) {
-            Serial.println("done.");
             msg->cmd = UnoSerial.read();
             return Error::Ok;
         } else if (cmd == CMD_NOTE && len > 1) {

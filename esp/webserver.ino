@@ -21,7 +21,7 @@ void setupWebServer() {
     server.onNotFound(handleNotFound);
 
     server.begin();
-    Serial.println("Server started");
+    Serial.println("Web server started\n");
 }
 
 void handleRoot() {
@@ -38,8 +38,6 @@ void handleSongList() {
 
     String json;
     serializeJson(doc, json);
-    Serial.println("===> /song-list called");
-    Serial.println(json);
     server.send(200, "application/json", json);
 }
 
@@ -66,7 +64,7 @@ void handleSetSong() {
         int value = body.substring(colonIndex + 1).toInt();
         current_song = value;
 
-        Serial.print("Selected song: ");
+        Serial.printf("Selected song: %d - %s \n", current_song, Songs[current_song].name);
         Serial.println(Songs[current_song].name);
     }
     server.send(200, "text/plain", "OK");
