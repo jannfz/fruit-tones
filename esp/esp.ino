@@ -1,6 +1,31 @@
+/**
+ ********************************************************************************
+ * @file    esp.ino
+ * @author  FP_3
+ *          Niels-Valdemar Dahlgaard
+ *          Sven Emil Rasmussen
+ *          Sebastian Fiala Mikkelsen
+ *          Emil Kornbeck Bøgh
+ *          Jann Feilberg Zachariasen
+ * @date    2025-05-06
+ * @brief   Enterence file with game state machine
+ *
+ * Copyright (c) 2025 FP_3
+ * 
+ * This software is released under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ ********************************************************************************
+ */
+
+/* Private includes ----------------------------------------------------------*/
 #include <ESP8266WebServer.h>
 #include "fruit_keyboard.h"
 
+/* Macros and defines --------------------------------------------------------*/
+
+/* Private typedef -----------------------------------------------------------*/
+
+/* Static variables ----------------------------------------------------------*/
 extern ESP8266WebServer server;
 
 uint8_t current_song = 0;
@@ -11,6 +36,13 @@ GameState current_state = GameState::MenuS;
 MenuSelect menu_selection = MenuSelect::NoneM;
 
 Command_t received_command;
+
+/* Global variables ----------------------------------------------------------*/
+
+/* Static function prototypes-------------------------------------------------*/
+
+/* Global functions ----------------------------------------------------------*/
+
 
 void setup() {
     Serial.begin(115200);
@@ -139,3 +171,4 @@ void loop() {
     }
 }
 
+/* Static functions ----------------------------------------------------------*/

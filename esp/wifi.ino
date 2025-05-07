@@ -1,16 +1,44 @@
+/**
+ ********************************************************************************
+ * @file    wifi.ino
+ * @author  FP_3
+ *          Niels-Valdemar Dahlgaard
+ *          Sven Emil Rasmussen
+ *          Sebastian Fiala Mikkelsen
+ *          Emil Kornbeck Bøgh
+ *          Jann Feilberg Zachariasen
+ * @date    2025-05-06
+ * @brief   WiFi setup
+ *
+ * Copyright (c) 2025 FP_3
+ * 
+ * This software is released under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ ********************************************************************************
+ */
+
+/* Private includes ----------------------------------------------------------*/
 #include <ESP8266WiFi.h>
 #include "secrets.h"
 
-const char spinChars[] = { '|', '/', '-', '\\' };
+/* Macros and defines --------------------------------------------------------*/
 
+/* Private typedef -----------------------------------------------------------*/
+
+/* Static variables ----------------------------------------------------------*/
+const char spinChars[] = { '|', '/', '-', '\\' };
 int spinIndex = 0;
 
-void spin_load() {
-    Serial.print('\b');                  // overwrite current line
-    Serial.print(spinChars[spinIndex]);
-    spinIndex = (spinIndex + 1) % 4;
-    delay(100);
-}
+/* Global variables ----------------------------------------------------------*/
+
+/* Static function prototypes-------------------------------------------------*/
+
+/* Global functions ----------------------------------------------------------*/
+
+void spin_load();
+
+
+
 
 void connect_to_WiFi() {
 
@@ -39,7 +67,7 @@ void connect_to_WiFi() {
         }
     }
 
-    WiFi.softAP("FruitTones");  // No password = open network
+    WiFi.softAP("FruitTones");
 
     Serial.printf("AP IP address:  %s \n", WiFi.softAPIP().toString().c_str());
 
@@ -50,4 +78,13 @@ void connect_to_WiFi() {
     if (MDNS.begin("iot")) {
         Serial.println("mDNS responder started\n");
     }
+}
+
+/* Static functions ----------------------------------------------------------*/
+
+void spin_load() {
+    Serial.print('\b');
+    Serial.print(spinChars[spinIndex]);
+    spinIndex = (spinIndex + 1) % 4;
+    delay(100);
 }

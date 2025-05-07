@@ -1,10 +1,40 @@
+/**
+ ********************************************************************************
+ * @file    uno.ino
+ * @author  FP_3
+ *          Niels-Valdemar Dahlgaard
+ *          Sven Emil Rasmussen
+ *          Sebastian Fiala Mikkelsen
+ *          Emil Kornbeck Bøgh
+ *          Jann Feilberg Zachariasen
+ * @date    2025-05-07
+ * @brief   Communication to and from Ardunio Uno
+ *
+ * Copyright (c) 2025 FP_3
+ * 
+ * This software is released under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ ********************************************************************************
+ */
+
+/* Private includes ----------------------------------------------------------*/
 #include "gpio.h"
 #include "fruit_keyboard.h"
 #include <SoftwareSerial.h>
 
-// Static instance inside the file scope
+/* Macros and defines --------------------------------------------------------*/
+
+/* Private typedef -----------------------------------------------------------*/
+
+/* Static variables ----------------------------------------------------------*/
+
 static SoftwareSerial UnoSerial(UNO_RX_PIN, UNO_TX_PIN);
 
+/* Global variables ----------------------------------------------------------*/
+
+/* Static function prototypes-------------------------------------------------*/
+
+/* Global functions ----------------------------------------------------------*/
 
 int8_t unoSetup(uint32_t baudrate) {
     UnoSerial.begin(baudrate);
@@ -80,3 +110,5 @@ int8_t unoGetData(Command_t *msg) {
 
     return Error::Err;
 }
+
+/* Static functions ----------------------------------------------------------*/

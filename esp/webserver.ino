@@ -1,13 +1,56 @@
+/**
+ ********************************************************************************
+ * @file    webserver.ino
+ * @author  FP_3
+ *          Niels-Valdemar Dahlgaard
+ *          Sven Emil Rasmussen
+ *          Sebastian Fiala Mikkelsen
+ *          Emil Kornbeck Bøgh
+ *          Jann Feilberg Zachariasen
+ * @date    2025-05-06
+ * @brief   Webserver setup and handle functions
+ *
+ * Copyright (c) 2025 FP_3
+ * 
+ * This software is released under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ ********************************************************************************
+ */
+
+/* Private includes ----------------------------------------------------------*/
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
 #include "fruit_keyboard.h"
 #include "index_html.h"
 
-// Web server instance
+/* Macros and defines --------------------------------------------------------*/
+
+/* Private typedef -----------------------------------------------------------*/
+
+/* Static variables ----------------------------------------------------------*/
+
 ESP8266WebServer server(80);
 
 String play_result = "";
+
+/* Global variables ----------------------------------------------------------*/
+
+/* Static function prototypes-------------------------------------------------*/
+
+void handleRoot();
+void handleSongList();
+void handleSetSong();
+void handleListen();
+void handlePlay();
+void handleFreeplay();
+void handleReturn();
+void handleStatus();
+void handleNotFound();
+String getSongEmojiString(const Song_t& song);
+
+/* Global functions ----------------------------------------------------------*/
+
 
 void setupWebServer() {
     server.on("/", HTTP_GET, handleRoot);
@@ -23,6 +66,12 @@ void setupWebServer() {
     server.begin();
     Serial.println("Web server started\n");
 }
+
+void sendResult(String res) {
+    play_result = res;
+}
+
+/* Static functions ----------------------------------------------------------*/
 
 void handleRoot() {
     server.send(200, "text/html", index_html);
@@ -41,18 +90,6 @@ void handleSongList() {
     server.send(200, "application/json", json);
 }
 
-String getSongEmojiString(const Song_t& song) {
-    String emojiString = "";
-    for (uint8_t i = 0; i < song.len; ++i) {
-        uint8_t note = song.sequence[i];
-        if (note >= 0 && note < NUM_NOTES) {
-            emojiString += Notes[note].emoji;
-        } else {
-            emojiString += " "; // Optional: add space or skip for NoNote
-        }
-    }
-    return emojiString;
-}
 
 void handleSetSong() {
     if (server.hasArg("plain")) {
@@ -70,9 +107,6 @@ void handleSetSong() {
     server.send(200, "text/plain", "OK");
 }
 
-void sendResult(String res) {
-    play_result = res;
-}
 
 void handleListen() {
 
@@ -121,4 +155,17 @@ void handleStatus() {
 
 void handleNotFound() {
     server.send(404, "text/plain", "404: Not found");
+}
+
+String getSongEmojiString(const Song_t& song) {
+    String emojiString = "";
+    for (uint8_t i = 0; i < song.len; ++i) {
+        uint8_t note = song.sequence[i];
+        if (note >= 0 && note < NUM_NOTES) {
+            emojiString += Notes[note].emoji;
+        } else {
+            emojiString += " "; // Optional: add space or skip for NoNote
+        }
+    }
+    return emojiString;
 }
