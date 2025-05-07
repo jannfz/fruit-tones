@@ -44,7 +44,7 @@ void handleSongList() {
 String getSongEmojiString(const Song_t& song) {
     String emojiString = "";
     for (uint8_t i = 0; i < song.len; ++i) {
-        Note note = song.sequence[i];
+        uint8_t note = song.sequence[i];
         if (note >= 0 && note < NUM_NOTES) {
             emojiString += Notes[note].emoji;
         } else {

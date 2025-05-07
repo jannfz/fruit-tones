@@ -1,7 +1,34 @@
+/**
+ ********************************************************************************
+ * @file    fruit_keyboard.h
+ * @author  FP_3
+ *          Niels-Valdemar Dahlgaard
+ *          Sven Emil Rasmussen
+ *          Sebastian Fiala Mikkelsen
+ *          Emil Kornbeck Bøgh
+ *          Jann Feilberg Zachariasen
+ * @date    2025-05-06
+ * @brief   Definitions and data structures for Fruit Keyboard game logic
+ *
+ * Copyright (c) 2025 FP_3
+ * 
+ * This software is released under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ ********************************************************************************
+ */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __FRUIT_KEYBOARD_H
 #define __FRUIT_KEYBOARD_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
 #include <Arduino.h>
+#include <stdint.h>
+#include <String.h>
 
 #include "inc/square_lemon_small.h"
 #include "inc/square_apple_small.h"
@@ -11,51 +38,55 @@
 #include "inc/square_pear_small.h"
 #include "inc/square_lime_small.h"
 
-enum GameState {
+/* Macros and defines --------------------------------------------------------*/
+
+/* Typedefs ------------------------------------------------------------------*/
+
+// Game states
+typedef enum {
     MenuS = 0,
     ListenS,
     PlayS,
     FreeplayS,
-};
+} GameState;
 
-enum MenuSelect {
+// Menu selection states
+typedef enum {
     NoneM = 0,
     ListenM,
     PlayM,
     FreeplayM,
     ReturnM,
-};
+} MenuSelect;
 
-enum Error {
-    Ok       =  0,
-    Err      = -1,
-    ComErr   = -2,
-    InvParam = -3,
-    NotReady = -4,
-};
+// Return codes
+typedef enum {
+    Ok  =  0,
+    Err = -1,
+} Error;
 
-typedef enum Note {
-    C = 0,
-    D = 1,
-    E = 2,
-    F = 3,
-    G = 4,
-    A = 5,
-    B = 6,
-    NoNote,
-} Note;
+// // Notes
+// typedef enum {
+//     C = 0,
+//     D,
+//     E,
+//     F,
+//     G,
+//     A,
+//     B,
+// } Notes;
 
-const uint8_t NUM_MODES = 2;
-
+// Note metadata (sound, emoji, display)
 typedef struct {
-  const char note;
-  const uint16_t freq;
-  const uint8_t pin;
-  const String name;
-  const String emoji;
-  const uint16_t *bitmap;
+    const char note;        // Letter representation of note
+    const uint16_t freq;    // Frequency in Hz
+    const uint8_t pin;      // Output pin
+    const String name;      // Fruit name
+    const String emoji;     // Emoji string
+    const uint16_t *bitmap; // Bitmap for display
 } Note_t;
 
+// Command bytes sent between ESP and Arduino
 typedef enum {
     CMD_LISTEN    = 0x41,
     CMD_PLAY      = 0x42,
@@ -66,59 +97,56 @@ typedef enum {
     CMD_RESULT    = 0x83,
 } Command;
 
-
+// Basic command packet
 typedef struct {
     uint8_t cmd;
     uint8_t param;
 } Command_t;
 
+// Song structure
 typedef struct {
     String name;
     uint8_t len;
-    Note sequence[20];
+    uint8_t sequence[50];
 } Song_t;
 
+/* Exported variables --------------------------------------------------------*/
 
-const uint8_t NUM_NOTES = 7;
-
-const Note_t Notes[NUM_NOTES+1] = {
-  {'C', 261,  4, "Lemon",    "🍋", lemon},      // 0
-  {'D', 293,  5, "Apple",    "🍎", apple},     // 1
-  {'E', 329,  6, "Banana",   "🍌", banana},    // 2
-  {'F', 349,  7, "Pear",     "🍐", pear},      // 3
-  {'G', 392,  8, "Orange",   "🍊", orange},    // 4
-  {'A', 440, 10, "Grapes",   "🍇", grapes2},   // 5
-  {'B', 493, 11, "Lime",     "🥝", lime},      // 6
-  {' ',   0,  0, "NoNote",   "?", NULL},      // 6
+// Note table
+const Note_t Notes[] = {
+    { 'C', 261,  4, "Lemon",    "🍋", lemon     },
+    { 'D', 293,  5, "Apple",    "🍎", apple     },
+    { 'E', 329,  6, "Banana",   "🍌", banana    },
+    { 'F', 349,  7, "Pear",     "🍐", pear      },
+    { 'G', 392,  8, "Orange",   "🍊", orange    },
+    { 'A', 440, 10, "Grapes",   "🍇", grapes2   },
+    { 'B', 493, 11, "Lime",     "🥝", lime      },
 };
 
-const uint8_t NUM_SONGS = 2;
+const uint8_t NUM_NOTES = sizeof(Notes) / sizeof(Notes[0]);
 
-const Song_t Songs[NUM_SONGS] = {
-    {"Itsy Bitsy Spider", 14, {C, C, G, G, A, A, G, F, F, E, E, D, D, C, NoNote}},
-    {"Twinkle, Twinkle, Little Star", 14, {E, E, E, C, E, G, G, C, G, E, A, B, A, G, NoNote}},
+// Song list
+const Song_t Songs[] = {
+    { 
+        "Itsy Bitsy Spider",
+        13,
+        {0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 2, 0, 0}
+    },
+    { 
+        "Twinkle, Twinkle, Little Star",
+        42,
+        {0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0, 4, 4, 3, 3, 2, 2, 1, 4, 4,
+         3, 3, 2, 2, 1, 0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0, }
+    },
 };
 
 
+const uint8_t NUM_SONGS = sizeof(Songs) / sizeof(Songs[0]);
 
+/* Global function prototypes ------------------------------------------------*/
 
-
-// #define CMD_NEW_GAME    0x41
-// #define CMD_RESET       0x42         // RESET
-// #define CMD_MODE        0x44         // SETMODE:    0x00 - 0x01 (game, freeplay)
-// #define CMD_SONG        0x84         // SONG:            0x00 - 0x08
-// #define CMD_NOTE_OLD    0x81         // FRUIT:           0x00 - 0x07 (fruit 0 to 7)
-// #define CMD_PLAYED      0x82         // CORRECT:         0x00 - 0x07 (fruit 0 to 7)
-// #define CMD_SCORE       0x83         // SCORE:           0x0000 - 0x7FFF
-// #define CMD_GAMEOVER    0x85         // GAMEOVER
-//                                      //
-// 
-// 
-// #define CMD_NEW_POS   0
-// #define CMD_SONG_POS    1
-// #define CMD_MODE_POS    2
-
-
-
-
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* __FRUIT_KEYBOARD_H */
