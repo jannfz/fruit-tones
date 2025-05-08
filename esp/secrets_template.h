@@ -17,7 +17,6 @@
  ********************************************************************************
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __SECRETS_H
 #define __SECRETS_H
 
@@ -29,19 +28,22 @@
 
 /* Typedefs ------------------------------------------------------------------*/
 
+// Struct to hold WiFi network credentials
 struct WifiCredentials {
-    const char* ssid;
-    const char* password;
+    const char* ssid;       // Network name
+    const char* password;   // Corresponding password
 };
 
 /* Exported variables --------------------------------------------------------*/
 
+// List of known WiFi networks for fallback connection
 WifiCredentials networks[] = {
-    { "SSID_1",         "PASSWORD_1" },
+    { "SSID_1",         "PASSWORD_1" },   // Replace with your actual network info
     { "SSID_2",         "PASSWORD_2" },
     { "SSID_3",         "PASSWORD_3" },
 };
 
+// Total number of configured networks
 const int numNetworks = sizeof(networks) / sizeof(networks[0]);
 
 /* Global function prototypes ------------------------------------------------*/

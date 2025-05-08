@@ -17,7 +17,6 @@
  ********************************************************************************
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __FRUIT_KEYBOARD_H
 #define __FRUIT_KEYBOARD_H
 
@@ -27,9 +26,8 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include <Arduino.h>
-#include <stdint.h>
-#include <String.h>
 
+// Bitmap assets for TFT display
 #include "inc/square_lemon_small.h"
 #include "inc/square_apple_small.h"
 #include "inc/square_orange_small.h"
@@ -42,7 +40,7 @@ extern "C" {
 
 /* Typedefs ------------------------------------------------------------------*/
 
-// Game states
+// Enum representing high-level game states
 typedef enum {
     MenuS = 0,
     ListenS,
@@ -50,7 +48,7 @@ typedef enum {
     FreeplayS,
 } GameState;
 
-// Menu selection states
+// Enum representing the selected menu option
 typedef enum {
     NoneM = 0,
     ListenM,
@@ -59,24 +57,13 @@ typedef enum {
     ReturnM,
 } MenuSelect;
 
-// Return codes
+// Enum used for error handling (e.g. serial communication)
 typedef enum {
     Ok  =  0,
     Err = -1,
 } Error;
 
-// // Notes
-// typedef enum {
-//     C = 0,
-//     D,
-//     E,
-//     F,
-//     G,
-//     A,
-//     B,
-// } Notes;
-
-// Note metadata (sound, emoji, display)
+// Structure to define a musical note and associated display/fruit data
 typedef struct {
     const char note;        // Letter representation of note
     const uint16_t freq;    // Frequency in Hz
@@ -86,7 +73,7 @@ typedef struct {
     const uint16_t *bitmap; // Bitmap for display
 } Note_t;
 
-// Command bytes sent between ESP and Arduino
+// Command types exchanged between ESP and Arduino Uno
 typedef enum {
     CMD_LISTEN    = 0x41,
     CMD_PLAY      = 0x42,
@@ -97,22 +84,23 @@ typedef enum {
     CMD_RESULT    = 0x83,
 } Command;
 
-// Basic command packet
+// Struct representing a command sent between ESP and Uno
 typedef struct {
     uint8_t cmd;
     uint8_t param;
 } Command_t;
 
-// Song structure
+// Struct representing a song as a sequence of notes
 typedef struct {
     String name;
     uint8_t len;
     uint8_t sequence[50];
 } Song_t;
 
+
 /* Exported variables --------------------------------------------------------*/
 
-// Note table
+// List of available notes and their associated fruits and visuals
 const Note_t Notes[] = {
     { 'C', 261,  4, "Lemon",    "🍋", lemon     },
     { 'D', 293,  5, "Apple",    "🍎", apple     },
@@ -123,9 +111,9 @@ const Note_t Notes[] = {
     { 'B', 493, 11, "Lime",     "🥝", lime      },
 };
 
-const uint8_t NUM_NOTES = sizeof(Notes) / sizeof(Notes[0]);
+const uint8_t NUM_NOTES = sizeof(Notes) / sizeof(Notes[0]);     // Total number of defined notes
 
-// Song list
+// List of available songs and their note sequences
 const Song_t Songs[] = {
     { 
         "Itsy Bitsy Spider",
@@ -141,7 +129,7 @@ const Song_t Songs[] = {
 };
 
 
-const uint8_t NUM_SONGS = sizeof(Songs) / sizeof(Songs[0]);
+const uint8_t NUM_SONGS = sizeof(Songs) / sizeof(Songs[0]);     // Total number of songs defined
 
 /* Global function prototypes ------------------------------------------------*/
 

@@ -18,21 +18,22 @@
  */
 
 /* Private includes ----------------------------------------------------------*/
-#include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <TFT_eSPI.h>
-#include "fruit_keyboard.h"
+#include <SPI.h>                // SPI communication library
+#include <Adafruit_GFX.h>       // Graphics primitives (required by TFT_eSPI)
+#include <TFT_eSPI.h>           // Optimized TFT library
+#include "fruit_keyboard.h"     // Note definitions and bitmaps
 
 /* Macros and defines --------------------------------------------------------*/
 
 /* Private typedef -----------------------------------------------------------*/
 
 /* Static variables ----------------------------------------------------------*/
-TFT_eSPI tft = TFT_eSPI();
+TFT_eSPI tft = TFT_eSPI();      // TFT display object (configured via User_Setup.h)
 
-const int cw = tft.width()/2;
-const int ch = tft.height()/2;
-const int s = min(cw/4,ch/4);
+// Center of screen and scale factor (used for custom graphics)
+const int cw = tft.width()/2;      // Center width
+const int ch = tft.height()/2;     // Center height
+const int s = min(cw/4, ch/4);     // Scaled unit for positioning or sizing
 
 /* Global variables ----------------------------------------------------------*/
 
@@ -40,14 +41,25 @@ const int s = min(cw/4,ch/4);
 
 /* Global functions ----------------------------------------------------------*/
 
+/**
+ * @brief Initializes the TFT display with orientation and background color.
+ */
 void setupDisplay(void) {  
-  tft.init();
-  tft.setRotation(1);
-  tft.fillScreen(TFT_WHITE);
+  tft.init();                      // Initialize TFT hardware
+  tft.setRotation(1);              // Rotate screen to landscape mode
+  tft.fillScreen(TFT_WHITE);       // Clear screen with white background
 }
 
+
+/**
+ * @brief Displays a fruit bitmap centered on screen.
+ * 
+ * @param fruit Pointer to Note_t structure containing fruit bitmap
+ */
 void displayFruit(const Note_t *fruit) {
-    tft.pushImage(60,60, 120, 120, fruit->bitmap);
+    // Draw bitmap at (60, 60) with size 120x120 using pointer from fruit
+    tft.pushImage(60, 60, 120, 120, fruit->bitmap);
 }
+
 
 /* Static functions ----------------------------------------------------------*/

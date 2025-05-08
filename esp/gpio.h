@@ -8,7 +8,7 @@
  *          Emil Kornbeck Bøgh
  *          Jann Feilberg Zachariasen
  * @date    2025-05-06
- * @brief   Definitions and data structures for Fruit Keyboard game logic
+ * @brief   GIPO Definitions
  *
  * Copyright (c) 2025 FP_3
  * 
@@ -30,6 +30,7 @@ extern "C" {
 
 /* Macros and defines --------------------------------------------------------*/
 
+// Ports used for serial communicating with Arduino Uno
 #define UNO_RX_PIN D1
 #define UNO_TX_PIN D2
 
